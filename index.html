@@ -1815,7 +1815,7 @@ async function enterWorkspace(wsId,wsName,wsType){
   document.getElementById('cfgWsName').textContent=wsName;
   try{await loadWsSettings();}catch(e){}
   showScreen('workspaces',false);showScreen('app',true);
-  switchTab('gastos');applyLang();await loadMonthData();
+  updateCurBadge();switchTab('gastos');applyLang();await loadMonthData();
 }
 async function loadWsSettings(){
   try{
@@ -1907,6 +1907,7 @@ async function loadMonthData(){
   }catch(e){expenses=[];incomes=[];assets=[];}
   try{const{data:cbrData,error:cbrErr}=await sb.from('cobros').select('*').eq('workspace_id',currentWsId).order('created_at',{ascending:false});cobros=(!cbrErr&&cbrData)?cbrData:[];}catch(e){cobros=[];}
   setLoading(false);
+  updateCurBadge();
   renderGastos();
   if(activeTab==='inversiones')renderInversiones();
   if(activeTab==='anual')renderAnual();
