@@ -118,7 +118,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 .alloc-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .sec-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-family:var(--mono);}
 .alloc-bars{display:flex;height:8px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:14px;}
-.aseg{border-radius:1px;min-width:2px;height:100%;}
+.aseg{border-radius:1px;min-width:2px;}
 .alloc-rows{display:flex;flex-direction:column;gap:6px;}
 .alloc-row-item{display:flex;align-items:center;justify-content:space-between;}
 .alloc-row-left{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--dim);}
@@ -1815,8 +1815,7 @@ async function enterWorkspace(wsId,wsName,wsType){
   document.getElementById('cfgWsName').textContent=wsName;
   try{await loadWsSettings();}catch(e){}
   showScreen('workspaces',false);showScreen('app',true);
-  updateCurBadge();switchTab('gastos');applyLang();await loadMonthData();
-  if(!expenses.length&&!incomes.length){setTimeout(()=>loadMonthData(),1500);}
+  switchTab('gastos');applyLang();await loadMonthData();
 }
 async function loadWsSettings(){
   try{
@@ -1908,7 +1907,6 @@ async function loadMonthData(){
   }catch(e){expenses=[];incomes=[];assets=[];}
   try{const{data:cbrData,error:cbrErr}=await sb.from('cobros').select('*').eq('workspace_id',currentWsId).order('created_at',{ascending:false});cobros=(!cbrErr&&cbrData)?cbrData:[];}catch(e){cobros=[];}
   setLoading(false);
-  updateCurBadge();
   renderGastos();
   if(activeTab==='inversiones')renderInversiones();
   if(activeTab==='anual')renderAnual();
@@ -1990,7 +1988,7 @@ function renderGastos(){
     const el4=document.getElementById('cSavingsSub2');if(el4)el4.textContent=avail>0?savingsPct+'% · libre: '+fmtCur(Math.max(0,realAvail),cur):'';
     renderMultiCurBreakdown(activeExp,incomes);
     renderEquivCards(totalIncUSD,totalExpUSD,avail);
-    document.getElementById('expCount').textContent=activeExp.length;
+    document.getElementById('expCount').textContent=expenses.length;
     if(incSourcesOpen)renderIncSourcesList();
     const bar=document.getElementById('hbar');
     if(bar){bar.style.width=Math.min(expPct,100)+'%';bar.style.background=expPct>85?'var(--red-l)':expPct>65?'var(--amber)':'var(--green-l)';}
@@ -1998,7 +1996,7 @@ function renderGastos(){
     renderAllocBar(totalExpUSD,totalIncUSD,avail);
     renderAlert(totalExpUSD);
     renderCatFilters();renderExpList();
-  }catch(e){console.error('renderGastos:',e);const ae=expenses.filter(x=>x.active!==false);document.getElementById('expCount').textContent=ae.length;renderCatFilters();renderExpList();}
+  }catch(e){console.error('renderGastos:',e);renderCatFilters();renderExpList();}
 }
 // FIX: muestra conversiones explicitas cuando hay multi-moneda
 function renderMultiCurBreakdown(activeExp,incs){
@@ -2040,11 +2038,11 @@ function renderAllocBar(exp,inc,avail){
   const allocs=wsSettings.allocations||DEFAULT_ALLOCS;
   if(inc<=0){document.getElementById('allocBars').innerHTML='<div class="aseg" style="background:var(--s3);flex:1;border-radius:3px;"></div>';document.getElementById('allocRows').innerHTML=`<div style="font-size:10px;color:var(--dim);font-family:var(--mono)">${t('agIngresos')}</div>`;return;}
   const cur=getCur(quickViewCur);const eP=(exp/inc)*100;
-  let bHtml=`<div class="aseg" style="background:var(--red);flex:${Math.max(eP,.5)} ${Math.max(eP,.5)} 0%;min-width:4px;"></div>`;
+  let bHtml=`<div class="aseg" style="background:var(--red);flex:${Math.max(eP,.5)}"></div>`;
   let rHtml=`<div class="alloc-row-item"><div class="alloc-row-left"><div class="adot" style="background:var(--red)"></div>Gastos</div><div class="alloc-row-right"><span class="alloc-row-pct">${eP.toFixed(0)}%</span><span class="alloc-row-amt">${fmtCur(exp,cur)}</span></div></div>`;
   allocs.forEach(a=>{
     const amt=avail>0?avail*(a.pct/100):0;const p=avail>0?(amt/inc)*100:0;
-    bHtml+=`<div class="aseg" style="background:${a.color};flex:${Math.max(p,.2)} ${Math.max(p,.2)} 0%;min-width:3px;"></div>`;
+    bHtml+=`<div class="aseg" style="background:${a.color};flex:${Math.max(p,.2)}"></div>`;
     rHtml+=`<div class="alloc-row-item"><div class="alloc-row-left"><div class="adot" style="background:${a.color}"></div>${esc(a.name)}</div><div class="alloc-row-right"><span class="alloc-row-pct">${a.pct}%</span><span class="alloc-row-amt">${fmtCur(amt,cur)}</span></div></div>`;
   });
   document.getElementById('allocBars').innerHTML=bHtml;document.getElementById('allocRows').innerHTML=rHtml;
