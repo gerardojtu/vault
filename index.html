@@ -1904,15 +1904,7 @@ async function loadMonthData(){
       sb.from('incomes').select('*').eq('workspace_id',currentWsId).eq('month',month),
       sb.from('assets').select('*').eq('workspace_id',currentWsId),
     ]);
-    expenses=expRes.data||[];assets=astRes.data||[];
-    const rawInc=incRes.data||[];
-    if(rawInc.length>0){incomes=rawInc;}
-    else{
-      try{
-        const{data:fallbackInc}=await sb.from('incomes').select('*').eq('workspace_id',currentWsId).order('created_at',{ascending:false}).limit(20);
-        incomes=fallbackInc||[];
-      }catch(e2){incomes=[];}
-    }
+    expenses=expRes.data||[];incomes=incRes.data||[];assets=astRes.data||[];
   }catch(e){expenses=[];incomes=[];assets=[];}
   try{const{data:cbrData,error:cbrErr}=await sb.from('cobros').select('*').eq('workspace_id',currentWsId).order('created_at',{ascending:false});cobros=(!cbrErr&&cbrData)?cbrData:[];}catch(e){cobros=[];}
   setLoading(false);
