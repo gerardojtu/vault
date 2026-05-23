@@ -1816,6 +1816,7 @@ async function enterWorkspace(wsId,wsName,wsType){
   try{await loadWsSettings();}catch(e){}
   showScreen('workspaces',false);showScreen('app',true);
   updateCurBadge();switchTab('gastos');applyLang();await loadMonthData();
+  if(!expenses.length&&!incomes.length){setTimeout(()=>loadMonthData(),1500);}
 }
 async function loadWsSettings(){
   try{
@@ -1903,7 +1904,15 @@ async function loadMonthData(){
       sb.from('incomes').select('*').eq('workspace_id',currentWsId).eq('month',month),
       sb.from('assets').select('*').eq('workspace_id',currentWsId),
     ]);
-    expenses=expRes.data||[];incomes=incRes.data||[];assets=astRes.data||[];
+    expenses=expRes.data||[];assets=astRes.data||[];
+    const rawInc=incRes.data||[];
+    if(rawInc.length>0){incomes=rawInc;}
+    else{
+      try{
+        const{data:fallbackInc}=await sb.from('incomes').select('*').eq('workspace_id',currentWsId).order('created_at',{ascending:false}).limit(20);
+        incomes=fallbackInc||[];
+      }catch(e2){incomes=[];}
+    }
   }catch(e){expenses=[];incomes=[];assets=[];}
   try{const{data:cbrData,error:cbrErr}=await sb.from('cobros').select('*').eq('workspace_id',currentWsId).order('created_at',{ascending:false});cobros=(!cbrErr&&cbrData)?cbrData:[];}catch(e){cobros=[];}
   setLoading(false);
@@ -1997,7 +2006,7 @@ function renderGastos(){
     renderAllocBar(totalExpUSD,totalIncUSD,avail);
     renderAlert(totalExpUSD);
     renderCatFilters();renderExpList();
-  }catch(e){console.error('renderGastos:',e);renderCatFilters();renderExpList();}
+  }catch(e){console.error('renderGastos:',e);const ae=expenses.filter(x=>x.active!==false);document.getElementById('expCount').textContent=ae.length;renderCatFilters();renderExpList();}
 }
 // FIX: muestra conversiones explicitas cuando hay multi-moneda
 function renderMultiCurBreakdown(activeExp,incs){
