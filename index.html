@@ -521,9 +521,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 /* Hero top row */
 .g-hero{
-  display:flex;align-items:flex-start;
+  display:flex;align-items:center;
   justify-content:space-between;
-  padding:18px 20px 14px;gap:12px;
+  padding:14px 20px 10px;gap:12px;
 }
 .g-hero-label{
   font-size:11px;font-weight:500;
@@ -542,7 +542,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 }
 .g-hero-right{
   display:flex;flex-direction:column;
-  gap:8px;flex-shrink:0;padding-top:2px;
+  gap:8px;flex-shrink:0;
 }
 .g-fab-inc,.g-fab-exp{
   display:flex;align-items:center;gap:6px;
@@ -647,9 +647,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 /* Distribución dramática */
 .g-distrib{
-  margin:12px 16px 0;
+  margin:8px 16px 0;
   background:var(--s1);border-radius:24px;
-  padding:20px 20px;
+  padding:16px 16px;
 }
 .g-distrib-hd{
   display:flex;align-items:center;
@@ -661,7 +661,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .g-distrib-bar{
   background:rgba(255,255,255,0.07);
   border-radius:6px;height:8px;overflow:hidden;
-  margin-bottom:14px;
+  margin-bottom:14px;display:flex;
 }
 /* Alloc rows — más grandes y visibles */
 .alloc-row-item{
@@ -916,7 +916,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .nav-bar{display:none;}
 
 /* ── STATS ROW 3 EN FILA ── */
-.g-stats-row{display:flex;margin:10px 18px 0;background:#161618;border-radius:14px;overflow:hidden;}
+.g-stats-row{display:flex;margin:8px 16px 0;background:#161618;border-radius:14px;overflow:hidden;}
 .g-stat{flex:1;padding:10px 10px;border-right:1px solid rgba(255,255,255,0.06);}
 .g-stat:last-child{border-right:none;}
 .g-stat-lbl{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--mono);}
@@ -931,7 +931,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .gs-lime .g-stat-val,.gs-lime .g-stat-pct{color:#a8e63d;}
 
 /* ── AHORRO 3 BLOQUES ── */
-.g-sav3{display:flex;margin:9px 16px 0;background:rgba(168,230,61,0.08);border:1px solid rgba(168,230,61,0.18);border-radius:18px;overflow:hidden;}
+.g-sav3{display:flex;margin:6px 16px 0;background:rgba(168,230,61,0.08);border:1px solid rgba(168,230,61,0.18);border-radius:18px;overflow:hidden;}
 .g-sav3-block{flex:1;padding:12px 12px;border-right:1px solid rgba(168,230,61,0.12);}
 .g-sav3-block:last-child{border-right:none;}
 .g-sav3-lbl{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(168,230,61,0.7);font-family:var(--mono);}
@@ -939,7 +939,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .g-sav3-sub{font-size:9px;color:rgba(168,230,61,0.4);font-family:var(--mono);margin-top:1px;}
 
 /* ── BARRA PROGRESO PRINCIPAL ── */
-.g-prog-wrap{padding:8px 18px 0;}
+.g-prog-wrap{padding:6px 16px 0;}
 .g-prog-track{height:5px;background:rgba(255,255,255,0.07);border-radius:5px;overflow:hidden;}
 .g-prog-fill{height:100%;border-radius:5px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 .g-prog-labels{display:flex;justify-content:space-between;margin-top:5px;}
@@ -984,14 +984,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="screen" id="app">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
-      <div class="topbar-avatar" id="topbarAvatar" onclick="goToWorkspaces()">G</div>
+      <div class="topbar-avatar" id="topbarAvatar" onclick="toggleAvatarMenu()">G</div>
+      <div id="avatarMenu" style="display:none;position:absolute;top:60px;left:16px;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:6px 0;z-index:999;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.5);">
+        <div onclick="goToWorkspaces();toggleAvatarMenu();" style="padding:12px 16px;font-size:13px;font-family:var(--font);color:var(--text);cursor:pointer;border-bottom:1px solid var(--border2);">&#8646; Cambiar workspace</div>
+        <div onclick="signOut();toggleAvatarMenu();" style="padding:12px 16px;font-size:13px;font-family:var(--font);color:var(--red-l);cursor:pointer;">&#10005; Cerrar sesi&oacute;n</div>
+      </div>
       <div style="min-width:0;flex:1;">
-        <div class="ws-indicator" onclick="goToWorkspaces()">
+        <div class="ws-indicator" style="cursor:default;">
           <div class="ws-dot" id="wsDot"></div>
           <span id="wsNameTop"></span>
-          <span style="color:var(--dim);font-size:10px;margin-left:2px;">&#8964;</span>
         </div>
-        <div class="page-title" id="pageTitle">Gastos</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -1668,15 +1670,14 @@ const INC_FREQ=[
   {val:'monthly',label:'Mensual',mult:1},
   {val:'biweekly',label:'Quincenal',mult:2},
   {val:'weekly',label:'Semanal',mult:4.33},
-  {val:'daily',label:'Diario',mult:30.44},
-  {val:'project',label:'Por proyecto',mult:1},
+  {val:'variable',label:'Variable',mult:1},
 ];
 function calcIncomeMonthlyUSD(inc){
   const rawAmt=parseFloat(inc.amount)||0;
   const code=((inc.currency)||'USD').toUpperCase();
   const amtUSD=toUSD(rawAmt,code);
   const freq=INC_FREQ.find(f=>f.val===(inc.freq||'monthly'))||INC_FREQ[0];
-  if(inc.freq==='project')return amtUSD;
+  if(inc.freq==='variable')return amtUSD;
   return amtUSD*freq.mult;
 }
 const DEFAULT_ALLOCS=[{name:'Inversi\u00f3n',pct:20,color:'#c4a55a'},{name:'Emergencias',pct:10,color:'#4878b8'},{name:'Buffer',pct:70,color:'#3a9e6a'}];
@@ -1973,7 +1974,7 @@ function renderGastos(){
     document.getElementById('cExpSub').textContent=activeExp.length+' '+t('activos');
     document.getElementById('cAvail').textContent=fmtCur(Math.max(0,avail),cur);
     document.getElementById('cAvail').className='';
-    document.getElementById('cAvailPct').textContent=availPct!==null?availPct+'% del ingreso':t('disponibleCard');
+    document.getElementById('cAvailPct').textContent=availPct!==null?availPct+'%':'';
     document.getElementById('cSavings').textContent=fmtCur(Math.max(0,savingsTotal),cur);
     const elSav2=document.getElementById('cSavings2');if(elSav2)elSav2.textContent=fmtCur(Math.max(0,savingsTotal),cur);
     document.getElementById('cSavingsSub').textContent=avail>0?savingsPct+'% \u00b7 libre: '+fmtCur(Math.max(0,realAvail),cur):t('sinGastos');
@@ -2003,7 +2004,7 @@ function renderMultiCurBreakdown(activeExp,incs){
   const expByCur={};
   activeExp.forEach(e=>{const code=(e.currency||'USD').toUpperCase();if(!expByCur[code])expByCur[code]={total:0,count:0};expByCur[code].total+=parseFloat(e.amount)||0;expByCur[code].count++;});
   const incByCur={};
-  incs.forEach(i=>{const code=(i.currency||'USD').toUpperCase();const freq=INC_FREQ.find(f=>f.val===(i.freq||'monthly'))||INC_FREQ[0];const rawAmt=parseFloat(i.amount)||0;const monthly=i.freq==='project'?rawAmt:rawAmt*freq.mult;if(!incByCur[code])incByCur[code]=0;incByCur[code]+=monthly;});
+  incs.forEach(i=>{const code=(i.currency||'USD').toUpperCase();const freq=INC_FREQ.find(f=>f.val===(i.freq||'monthly'))||INC_FREQ[0];const rawAmt=parseFloat(i.amount)||0;const monthly=(i.freq==='variable')?rawAmt:rawAmt*freq.mult;if(!incByCur[code])incByCur[code]=0;incByCur[code]+=monthly;});
   const hasNonUSD=Object.keys(expByCur).some(c=>c!=='USD')||Object.keys(incByCur).some(c=>c!=='USD');
   if(!hasNonUSD){wrap.style.display='none';wrap.innerHTML='';return;}
   let html='<div class="multicur-box"><div class="multicur-hd">CONVERSIONES APLICADAS</div>';
@@ -2142,7 +2143,7 @@ async function saveExp(){
   closeModal('expModal');renderGastos();
 }
 async function deleteCurrentExp(){if(!editingExpId)return;const ok=await confirm2('\u00bfEliminar este gasto?','No se puede deshacer.');if(!ok)return;await sb.from('expenses').delete().eq('id',editingExpId);expenses=expenses.filter(e=>e.id!==editingExpId);closeModal('expModal');renderGastos();toast(t('pmEliminado2'));}
-async function deleteExp(id){await sb.from('expenses').delete().eq('id',id);expenses=expenses.filter(e=>e.id!==id);renderGastos();toast(t('pmEliminado2'));}
+async function deleteExp(id){const ok=await confirm2('\u00bfEliminar este gasto?','No se puede deshacer.');if(!ok)return;await sb.from('expenses').delete().eq('id',id);expenses=expenses.filter(e=>e.id!==id);renderGastos();toast(t('pmEliminado2'));}
 async function toggleExp(id,checked){await sb.from('expenses').update({active:checked}).eq('id',id);const e=expenses.find(x=>x.id===id);if(e)e.active=checked;showSaving();renderGastos();}
 function exportReminder(type){
   const name=document.getElementById('fName').value.trim()||'Gasto';const due=document.getElementById('fDueDate').value;const reminder=document.getElementById('fReminder').value;
@@ -2215,15 +2216,60 @@ function renderIncSourcesList(){
   const el=document.getElementById('incSourcesList');if(!el)return;
   if(!incomes.length){el.innerHTML=`<div class="inc-add-row" onclick="event.stopPropagation();openIncomeModal()">+ ${t('agregarFuenteVacia')}</div>`;return;}
   let html='';
-  incomes.forEach(inc=>{
-    const freq=INC_FREQ.find(f=>f.val===(inc.freq||'monthly'))||INC_FREQ[0];
-    const origAmt=parseFloat(inc.amount)||0;const incCurCode=(inc.currency||'USD').toUpperCase();const origCur=getCur(incCurCode);
-    const origDisp=incCurCode==='USD'?fmt(origAmt):origCur.symbol+origAmt.toLocaleString('en-US',{maximumFractionDigits:2})+' '+incCurCode;
-    const monthlyUSD=calcIncomeMonthlyUSD(inc);
-    const showSub=incCurCode!=='USD'||inc.freq!=='monthly';
-    const subText=showSub?'\u2248 '+fmt(monthlyUSD)+'/mes ('+freq.label.toLowerCase()+')':'';
-    const dotColor=incCurCode==='USD'?'var(--green-l)':incCurCode==='VES'?'var(--amber)':incCurCode==='EUR'?'var(--blue-l)':'var(--gold-l)';
-    html+=`<div class="inc-source-row" onclick="event.stopPropagation();openIncomeModal()"><div class="inc-source-dot" style="background:${dotColor}"></div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(inc.name)}</div>${subText?`<div style="font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:1px;">${subText}</div>`:''}</div><div style="text-align:right;flex-shrink:0;"><div class="inc-source-freq" style="color:${incCurCode!=='USD'?'var(--blue-l)':'var(--dim)'}">${freq.label}</div><div class="inc-source-amt" style="color:${incCurCode!=='USD'?'var(--blue-l)':'var(--green-l)'}">${origDisp}</div></div></div>`;
+  // build variable groups map
+  var varGroups={};
+  incomes.forEach(function(inc){
+    if((inc.freq||'monthly')==='variable'){
+      var k=(inc.name||'').trim()||'Sin nombre';
+      if(!varGroups[k])varGroups[k]=[];
+      varGroups[k].push(inc);
+    }
+  });
+  var renderedVarKeys={};
+  incomes.forEach(function(inc){
+    var freq=INC_FREQ.find(function(f){return f.val===(inc.freq||'monthly');})||INC_FREQ[0];
+    var origAmt=parseFloat(inc.amount)||0;
+    var incCurCode=(inc.currency||'USD').toUpperCase();
+    var origCur=getCur(incCurCode);
+    var origDisp=incCurCode==='USD'?fmt(origAmt):origCur.symbol+origAmt.toLocaleString('en-US',{maximumFractionDigits:2})+' '+incCurCode;
+    var monthlyUSD=calcIncomeMonthlyUSD(inc);
+    var dotColor=incCurCode==='USD'?'var(--green-l)':incCurCode==='VES'?'var(--amber)':incCurCode==='EUR'?'var(--blue-l)':'var(--gold-l)';
+    if((inc.freq||'monthly')==='variable'){
+      var vkey=(inc.name||'').trim()||'Sin nombre';
+      var group=varGroups[vkey];
+      if(group.length>1){
+        // render group header once
+        if(!renderedVarKeys[vkey]){
+          renderedVarKeys[vkey]=true;
+          var groupTotal=0;
+          group.forEach(function(gi){groupTotal+=calcIncomeMonthlyUSD(gi);});
+          html+='<div style="background:var(--s2);border-radius:var(--rs);margin-bottom:4px;padding:9px 12px;cursor:pointer;" onclick="event.stopPropagation();openIncomeModal()">';
+          html+='<div style="display:flex;align-items:center;gap:10px;">';
+          html+='<div class="inc-source-dot" style="background:'+dotColor+'"></div>';
+          html+='<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;">'+esc(vkey)+'</div>';
+          html+='<div style="font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:1px;">Variable · '+group.length+' entradas · ≈'+fmt(groupTotal)+'/mes</div></div>';
+          html+='<div style="text-align:right;"><div class="inc-source-freq" style="color:var(--dim)">Variable</div><div class="inc-source-amt" style="color:var(--green-l)">'+fmt(groupTotal)+'/mes</div></div>';
+          html+='</div>';
+          group.forEach(function(gi,idx){
+            var ga=parseFloat(gi.amount)||0;
+            var gc=(gi.currency||'USD').toUpperCase();
+            var gcur=getCur(gc);
+            var gd=gc==='USD'?fmt(ga):gcur.symbol+ga.toLocaleString('en-US',{maximumFractionDigits:2})+' '+gc;
+            html+='<div style="display:flex;justify-content:space-between;padding:4px 0 4px 16px;border-top:1px solid var(--border);">';
+            html+='<span style="font-size:11px;color:var(--dim);font-family:var(--mono);">entrada '+(idx+1)+'</span>';
+            html+='<span style="font-size:12px;font-family:var(--mono);color:var(--green-l);">'+gd+'</span>';
+            html+='</div>';
+          });
+          html+='</div>';
+        }
+        // skip individual render for grouped entries
+        return;
+      }
+    }
+    // normal render (non-variable, or variable with unique name)
+    var showSub=incCurCode!=='USD'||inc.freq!=='monthly';
+    var subText=showSub?'≈ '+fmt(monthlyUSD)+'/mes ('+freq.label.toLowerCase()+')':'';
+    html+='<div class="inc-source-row" onclick="event.stopPropagation();openIncomeModal()"><div class="inc-source-dot" style="background:'+dotColor+'"></div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(inc.name)+'</div>'+(subText?'<div style="font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:1px;">'+subText+'</div>':'')+'</div><div style="text-align:right;flex-shrink:0;"><div class="inc-source-freq" style="color:'+(incCurCode!=='USD'?'var(--blue-l)':'var(--dim)')+'">'+freq.label+'</div><div class="inc-source-amt" style="color:'+(incCurCode!=='USD'?'var(--blue-l)':'var(--green-l)')+'">'+origDisp+'</div></div></div>';
   });
   const byCur={};incomes.forEach(inc=>{const code=(inc.currency||'USD').toUpperCase();byCur[code]=(byCur[code]||0)+calcIncomeMonthlyUSD(inc);});
   const curKeys=Object.keys(byCur);
@@ -2780,6 +2826,11 @@ function esc(s){if(s===undefined||s===null)return'';return String(s).replace(/&/
 // ═══════════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════════
+
+function toggleAvatarMenu(){const m=document.getElementById('avatarMenu');if(m)m.style.display=m.style.display==='none'?'block':'none';}
+document.addEventListener('click',function(e){const m=document.getElementById('avatarMenu');const av=document.getElementById('topbarAvatar');if(m&&m.style.display==='block'&&!m.contains(e.target)&&e.target!==av)m.style.display='none';});
+function signOut(){sb.auth.signOut().then(()=>{showScreen('app',false);showScreen('auth',true);});}
+
 window.addEventListener('DOMContentLoaded',init);
 
 function openContextualAdd(){
