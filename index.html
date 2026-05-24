@@ -117,8 +117,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 .alloc-card{margin:8px 16px 0;background:var(--s1);border:none;border-radius:24px;padding:18px 20px;}
 .alloc-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .sec-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-family:var(--mono);}
-.alloc-bars{display:flex;height:8px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:14px;}
-.aseg{border-radius:1px;min-width:2px;height:100%;}
+.alloc-bars{display:flex;height:8px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:14px;align-items:stretch;}
+.aseg{border-radius:1px;min-width:2px;height:100%;align-self:stretch;flex-shrink:0;}
 .alloc-rows{display:flex;flex-direction:column;gap:6px;}
 .alloc-row-item{display:flex;align-items:center;justify-content:space-between;}
 .alloc-row-left{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--dim);}
@@ -1895,7 +1895,13 @@ async function startLeaveWs(){
 // ═══════════════════════════════════════════════════
 async function loadMonthData(){
   if(!currentWsId)return;
-  try{const{data:{session}}=await sb.auth.getSession();if(!session){setLoading(false);handleLogout();return;}currentUser=session.user;}catch(e){setLoading(false);handleLogout();return;}
+  try{
+    let session=null;
+    const{data:sd}=await sb.auth.getSession();session=sd&&sd.session;
+    if(!session){const{data:rd}=await sb.auth.refreshSession();session=rd&&rd.session;}
+    if(!session){setLoading(false);handleLogout();return;}
+    currentUser=session.user;
+  }catch(e){setLoading(false);handleLogout();return;}
   setLoading(true);const month=mkey();
   try{
     const[expRes,incRes,astRes]=await Promise.all([
@@ -1996,7 +2002,7 @@ function renderGastos(){
     renderAllocBar(totalExpUSD,totalIncUSD,avail);
     renderAlert(totalExpUSD);
     renderCatFilters();renderExpList();
-  }catch(e){console.error('renderGastos:',e);renderCatFilters();renderExpList();}
+  }catch(e){console.error('renderGastos:',e);document.getElementById('expCount').textContent=expenses.filter(x=>x.active!==false).length;renderCatFilters();renderExpList();}
 }
 // FIX: muestra conversiones explicitas cuando hay multi-moneda
 function renderMultiCurBreakdown(activeExp,incs){
