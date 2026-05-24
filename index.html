@@ -118,7 +118,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font
 .alloc-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .sec-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-family:var(--mono);}
 .alloc-bars{display:flex;height:8px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:14px;}
-.aseg{border-radius:1px;min-width:2px;}
+.aseg{border-radius:1px;min-width:2px;height:100%;}
 .alloc-rows{display:flex;flex-direction:column;gap:6px;}
 .alloc-row-item{display:flex;align-items:center;justify-content:space-between;}
 .alloc-row-left{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--dim);}
@@ -1815,7 +1815,7 @@ async function enterWorkspace(wsId,wsName,wsType){
   document.getElementById('cfgWsName').textContent=wsName;
   try{await loadWsSettings();}catch(e){}
   showScreen('workspaces',false);showScreen('app',true);
-  switchTab('gastos');applyLang();await loadMonthData();
+  updateCurBadge();switchTab('gastos');applyLang();await loadMonthData();
 }
 async function loadWsSettings(){
   try{
@@ -1988,7 +1988,7 @@ function renderGastos(){
     const el4=document.getElementById('cSavingsSub2');if(el4)el4.textContent=avail>0?savingsPct+'% · libre: '+fmtCur(Math.max(0,realAvail),cur):'';
     renderMultiCurBreakdown(activeExp,incomes);
     renderEquivCards(totalIncUSD,totalExpUSD,avail);
-    document.getElementById('expCount').textContent=expenses.length;
+    document.getElementById('expCount').textContent=activeExp.length;
     if(incSourcesOpen)renderIncSourcesList();
     const bar=document.getElementById('hbar');
     if(bar){bar.style.width=Math.min(expPct,100)+'%';bar.style.background=expPct>85?'var(--red-l)':expPct>65?'var(--amber)':'var(--green-l)';}
