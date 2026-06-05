@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fintra">
-<title>Fintra v10.7</title>
+<title>Fintra v6.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -992,7 +992,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div style="min-width:0;flex:1;">
         <div class="ws-indicator" style="cursor:default;">
           <div class="ws-dot" id="wsDot"></div>
-          <span id="wsNameTop"></span><span style="font-size:9px;font-family:var(--mono);color:var(--dim);margin-left:6px;opacity:0.6;">v10.7</span>
+          <span id="wsNameTop"></span>
         </div>
       </div>
     </div>
@@ -1895,7 +1895,7 @@ async function startLeaveWs(){
 // ═══════════════════════════════════════════════════
 async function loadMonthData(){
   if(!currentWsId)return;
-  if(!currentUser){setLoading(false);handleLogout();return;}
+  try{const{data:{session}}=await sb.auth.getSession();if(!session){setLoading(false);handleLogout();return;}currentUser=session.user;}catch(e){setLoading(false);handleLogout();return;}
   setLoading(true);const month=mkey();
   try{
     const[expRes,incRes,astRes]=await Promise.all([
@@ -1954,7 +1954,6 @@ function renderGastos(){
   try{
     updateCurBadge();renderCurQuick();
     const activeExp=expenses.filter(e=>e.active!==false);
-    document.getElementById('expCount').textContent=activeExp.length;
     // FIX: cada gasto convertido a USD con su propia moneda
     const totalExpUSD=activeExp.reduce((s,e)=>s+toUSD(parseFloat(e.amount)||0,(e.currency||'USD').toUpperCase()),0);
     // FIX: ingresos — convertir a USD + aplicar freq para mensualizar
