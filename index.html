@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fintra">
-<title>Fintra v6.0</title>
+<title>Fintra v10.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1895,7 +1895,13 @@ async function startLeaveWs(){
 // ═══════════════════════════════════════════════════
 async function loadMonthData(){
   if(!currentWsId)return;
-  try{const{data:{session}}=await sb.auth.getSession();if(!session){setLoading(false);handleLogout();return;}currentUser=session.user;}catch(e){setLoading(false);handleLogout();return;}
+  try{
+    let session=null;
+    try{const{data:s1}=await sb.auth.getSession();session=s1&&s1.session;}catch(e1){}
+    if(!session){try{const{data:s2}=await sb.auth.refreshSession();session=s2&&s2.session;}catch(e2){}}
+    if(!session){setLoading(false);handleLogout();return;}
+    currentUser=session.user;
+  }catch(e){setLoading(false);handleLogout();return;}
   setLoading(true);const month=mkey();
   try{
     const[expRes,incRes,astRes]=await Promise.all([
@@ -1954,6 +1960,7 @@ function renderGastos(){
   try{
     updateCurBadge();renderCurQuick();
     const activeExp=expenses.filter(e=>e.active!==false);
+    document.getElementById('expCount').textContent=activeExp.length;
     // FIX: cada gasto convertido a USD con su propia moneda
     const totalExpUSD=activeExp.reduce((s,e)=>s+toUSD(parseFloat(e.amount)||0,(e.currency||'USD').toUpperCase()),0);
     // FIX: ingresos — convertir a USD + aplicar freq para mensualizar
@@ -1988,7 +1995,7 @@ function renderGastos(){
     const el4=document.getElementById('cSavingsSub2');if(el4)el4.textContent=avail>0?savingsPct+'% · libre: '+fmtCur(Math.max(0,realAvail),cur):'';
     renderMultiCurBreakdown(activeExp,incomes);
     renderEquivCards(totalIncUSD,totalExpUSD,avail);
-    document.getElementById('expCount').textContent=expenses.filter(e=>e.active!==false).length;
+    document.getElementById('expCount').textContent=expenses.length;
     if(incSourcesOpen)renderIncSourcesList();
     const bar=document.getElementById('hbar');
     if(bar){bar.style.width=Math.min(expPct,100)+'%';bar.style.background=expPct>85?'var(--red-l)':expPct>65?'var(--amber)':'var(--green-l)';}
