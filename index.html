@@ -1895,13 +1895,7 @@ async function startLeaveWs(){
 // ═══════════════════════════════════════════════════
 async function loadMonthData(){
   if(!currentWsId)return;
-  try{
-    let session=null;
-    try{const{data:s1}=await sb.auth.getSession();session=s1&&s1.session;}catch(e1){}
-    if(!session){try{const{data:s2}=await sb.auth.refreshSession();session=s2&&s2.session;}catch(e2){}}
-    if(!session){setLoading(false);handleLogout();return;}
-    currentUser=session.user;
-  }catch(e){setLoading(false);handleLogout();return;}
+  if(!currentUser){setLoading(false);handleLogout();return;}
   setLoading(true);const month=mkey();
   try{
     const[expRes,incRes,astRes]=await Promise.all([
