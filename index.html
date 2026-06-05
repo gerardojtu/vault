@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fintra">
-<title>Fintra v6.0</title>
+<title>Fintra v10.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1988,7 +1988,7 @@ function renderGastos(){
     const el4=document.getElementById('cSavingsSub2');if(el4)el4.textContent=avail>0?savingsPct+'% · libre: '+fmtCur(Math.max(0,realAvail),cur):'';
     renderMultiCurBreakdown(activeExp,incomes);
     renderEquivCards(totalIncUSD,totalExpUSD,avail);
-    document.getElementById('expCount').textContent=expenses.length;
+    document.getElementById('expCount').textContent=expenses.filter(e=>e.active!==false).length;
     if(incSourcesOpen)renderIncSourcesList();
     const bar=document.getElementById('hbar');
     if(bar){bar.style.width=Math.min(expPct,100)+'%';bar.style.background=expPct>85?'var(--red-l)':expPct>65?'var(--amber)':'var(--green-l)';}
